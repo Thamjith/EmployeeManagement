@@ -22,8 +22,8 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+
     public AuthenticationResponse register(RegisterRequest request) {
-        log.info("Request == {}", request);
         var user = User.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
@@ -31,29 +31,30 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
                 .build();
-        log.info("user == {}", user);
-        repository.save(user);
-        var jwtToken = jwtService.generateToken(user);
-        log.info("jwtToken == {}", jwtToken);
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
+        var existingUser = repository.findByEmail(request.getEmail());
+        if (existingUser.isPresent()) {
+            return AuthenticationResponse.builder()
+                    .Message("Email already exist")
+                    .build();
+        }else{
+            repository.save(user);
+            var jwtToken = jwtService.generateToken(user);
+            return AuthenticationResponse.builder()
+                    .token(jwtToken)
+                    .build();
+        }
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        log.info("Request == {}{}", request.getEmail(), request.getPassword());
         var test = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
-        log.info("test = {}", test);
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow();
-        log.info("user = {}", user);
         var jwtToken = jwtService.generateToken(user);
-        log.info("jwtToken = {}", jwtToken);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();

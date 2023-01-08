@@ -1,4 +1,4 @@
-package com.inapp.EmployeeManagement.Controller;
+package com.inapp.EmployeeManagement.HelperClasses;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
-    private String token;
-    private String Message;
+public class SimpleResponse {
+    private String message;
+    private Boolean status;
 }
