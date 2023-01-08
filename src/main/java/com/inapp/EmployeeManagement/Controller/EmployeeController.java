@@ -65,4 +65,9 @@ public class EmployeeController {
     public Employee UpdateEmployee(@RequestBody Employee employee) {
         return employeeService.updateEmployee(employee);
     }
+
+    @GetMapping("/dependent/{id}")
+    public SimpleResponse GetDependentName(@PathVariable int id){
+        return employeeService.getDependentName(id);
+    }
 }

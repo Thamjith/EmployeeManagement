@@ -83,4 +83,20 @@ public class EmployeeService {
             return employeeRepository.save(emp);
         }else throw new UsernameNotFoundException("User doesn't exist");
     }
+
+    public SimpleResponse getDependentName(int id) {
+        if(employeeRepository.existsById(id)){
+            Employee emp = employeeRepository.findById(id).get();
+            var dependentName = emp.getDependents().getFirstname() + " " + emp.getDependents().getLastname();
+            return SimpleResponse.builder()
+                    .message(dependentName)
+                    .status(true)
+                    .build();
+        }else{
+            return SimpleResponse.builder()
+                    .message("Employee doesn't exist")
+                    .status(false)
+                    .build();
+        }
+    }
 }
